@@ -1,15 +1,38 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
+# =========================================================
+# BASE DIRECTORY
+# =========================================================
+
+# Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
-SECRET_KEY = 'django-insecure-change-this-in-production'
-DEBUG = True
-ALLOWED_HOSTS = []
 
-# APPLICATIONS
+# =========================================================
+# SECURITY SETTINGS
+# =========================================================
+
+# Secret key (should be stored securely in production)
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-change-this-in-production"
+)
+
+# Debug mode (set to False in production)
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+# Allowed hosts (add your domain in production)
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+
+# =========================================================
+# APPLICATION DEFINITION
+# =========================================================
+
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -17,14 +40,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party
+    # Third-party apps
     'rest_framework',
 
-    # Local
+    # Local apps
     'expenses',
 ]
 
+
+# =========================================================
 # MIDDLEWARE
+# =========================================================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -35,12 +62,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# Root URL configuration
 ROOT_URLCONF = 'expense_api.urls'
+
+
+# =========================================================
+# TEMPLATES
+# =========================================================
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [],  # Add custom template directories if needed
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -52,9 +86,15 @@ TEMPLATES = [
     },
 ]
 
+
+# WSGI application path
 WSGI_APPLICATION = 'expense_api.wsgi.application'
 
-# DATABASE
+
+# =========================================================
+# DATABASE CONFIGURATION
+# =========================================================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -62,44 +102,73 @@ DATABASES = {
     }
 }
 
+
+# =========================================================
 # PASSWORD VALIDATION
+# =========================================================
+
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'
+    },
 ]
 
+
+# =========================================================
 # INTERNATIONALIZATION
+# =========================================================
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# STATIC FILES
-STATIC_URL = 'static/'
 
+# =========================================================
+# STATIC FILES
+# =========================================================
+
+STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# =========================
-# DRF SETTINGS
-# =========================
+
+# =========================================================
+# DJANGO REST FRAMEWORK CONFIGURATION
+# =========================================================
 
 REST_FRAMEWORK = {
+    # Use JWT authentication globally
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+
+    # Require authentication for all endpoints by default
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
-# =========================
-# JWT SETTINGS
-# =========================
+
+# =========================================================
+# SIMPLE JWT CONFIGURATION
+# =========================================================
 
 SIMPLE_JWT = {
+    # Access token lifetime
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+
+    # Refresh token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    # Authorization header format
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
