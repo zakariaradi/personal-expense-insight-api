@@ -18,7 +18,6 @@ class ExpenseAPITest(APITestCase):
             password="testpass123"
         )
 
-        # Authenticate the test client
         self.client.force_authenticate(user=self.user)
 
     def test_create_expense(self):
@@ -80,6 +79,12 @@ class ExpenseAPITest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("total_spent", response.data)
-        self.assertIn("average_spent", response.data)
-        self.assertIn("expense_count", response.data)
+
+        # Top-level structure
+        self.assertIn("success", response.data)
+        self.assertIn("data", response.data)
+
+        # Summary fields inside "data"
+        self.assertIn("total_spent", response.data["data"])
+        self.assertIn("average_spent", response.data["data"])
+        self.assertIn("expense_count", response.data["data"])
